@@ -20,5 +20,7 @@ Because the model data is too large, we do not give the model results of all exp
 ## Train
 
 You can configure the training data path, validation data path, model output path and corresponding training parameters of the model in the config.py file for training.
+
 If there is already model data, you can also configure the model path and test data path in the config.py file for testing.
+
 The training is based on python3.7.
