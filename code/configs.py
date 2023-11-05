@@ -66,3 +66,4 @@ class Config(object):
         # batch 测试batch大小
         self.test_batch_size = 1
 
+        self.run_rq3 = False

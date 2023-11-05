@@ -162,7 +162,7 @@ def train(model, train_loader, test_loader, optim, loss_function, max_epoch, sta
             model.train()
             if max_acc < acc:
                 max_acc = acc
-                save(model, optim, config.model_save_path + "_" + data_id, epoch)
+                save(model, optim, config.model_save_path + "_" + data_id if data_id!='5' else config.model_save_path, epoch)
 
 
 if __name__ == '__main__':
@@ -172,11 +172,69 @@ if __name__ == '__main__':
     tokenizer = AutoTokenizer.from_pretrained(config.model_path)
     # 模型最长输入
     max_length = config.max_length
-    
-    # 加载数据
-    for i in range(0, 5):
-        data_train_path = config.data_train_path + str(i) + '.pkl'
-        data_test_path = config.data_test_path + str(i) + '.pkl'
+
+    if config.run_rq3:
+        # 加载数据
+        for i in range(0, 5):
+            data_train_path = config.data_train_path + str(i) + '.pkl'
+            data_test_path = config.data_test_path + str(i) + '.pkl'
+            with open(data_train_path, 'rb') as f:
+                train_texts_1, train_texts_2, train_labels = pd.read_pickle(f)
+                train_texts_1 = list(train_texts_1)
+                train_texts_2 = list(train_texts_2)
+                train_labels = list(train_labels)
+                train_texts_1 = [text.lower() for text in train_texts_1]
+                train_texts_2 = [text.lower() for text in train_texts_2]
+                # 过拟合检测/正确补丁检测
+                train_labels = [0 if label == 1 else 1 for label in train_labels]
+            with open(data_test_path, 'rb') as f:
+                test_texts_1, test_texts_2, test_labels = pd.read_pickle(f)
+                test_texts_1 = list(test_texts_1)
+                test_texts_2 = list(test_texts_2)
+                test_labels = list(test_labels)
+                test_texts_1 = [text.lower() for text in test_texts_1]
+                test_texts_2 = [text.lower() for text in test_texts_2]
+                # 过拟合检测/正确补丁检测
+                test_labels = [0 if label == 1 else 1 for label in test_labels]
+            print("训练集:", len(train_labels))
+            print("测试集:", len(test_labels))
+
+            tokenizer_func = {'headTail': tokenizer_head_tail, 'head': tokenizer_head, 'tail': tokenizer_tail, 'mid': tokenizer_mid}
+            train_dataset = Dataset(tokenizer_func[config.cutMethod], tokenizer, max_length, train_texts_1, train_texts_2, train_labels)
+            test_dataset = Dataset(tokenizer_func[config.cutMethod], tokenizer, max_length, test_texts_1, test_texts_2, test_labels)
+
+            # 生成训练和测试Dataloader
+            train_loader = DataLoader(train_dataset, batch_size=config.train_batch_size, shuffle=True)
+            test_loader = DataLoader(test_dataset, batch_size=config.test_batch_size, shuffle=True)
+
+            # 模型
+            model = Model(config)
+            # 定义GPU/CPU
+            device = config.device
+            model.to(device)
+            # 多GPU并行
+            model = torch.nn.DataParallel(model, device_ids=config.device_ids)
+            #    model = torch.nn.DataParallel(model)
+            # 加载已有模型参数
+            if config.start_epoch > 0:
+                model = load(model, config.model_save_path, config.start_epoch - 1)
+            # 训练模式
+            model.train()
+            # 训练次数
+            max_epoch = config.num_epoch
+            # 开始训练是第几轮
+            start_epoch = config.start_epoch
+            # 优化器
+            optim = AdamW(model.parameters(), lr=5e-5)
+            # 损失函数
+            loss_function = torch.nn.BCEWithLogitsLoss()
+
+            # 开始训练
+            train(model=model, train_loader=train_loader, test_loader=test_loader, optim=optim, loss_function=loss_function,
+                  max_epoch=max_epoch, start_epoch=start_epoch, data_id=str(i))
+    else:
+        data_train_path = config.data_train_path[:-2]+ '.pkl'
+        data_test_path = config.data_test_path[:-2]+ '.pkl'
         with open(data_train_path, 'rb') as f:
             train_texts_1, train_texts_2, train_labels = pd.read_pickle(f)
             train_texts_1 = list(train_texts_1)
@@ -198,9 +256,12 @@ if __name__ == '__main__':
         print("训练集:", len(train_labels))
         print("测试集:", len(test_labels))
 
-        tokenizer_func = {'headTail': tokenizer_head_tail, 'head': tokenizer_head, 'tail': tokenizer_tail, 'mid': tokenizer_mid}
-        train_dataset = Dataset(tokenizer_func[config.cutMethod], tokenizer, max_length, train_texts_1, train_texts_2, train_labels)
-        test_dataset = Dataset(tokenizer_func[config.cutMethod], tokenizer, max_length, test_texts_1, test_texts_2, test_labels)
+        tokenizer_func = {'headTail': tokenizer_head_tail, 'head': tokenizer_head, 'tail': tokenizer_tail,
+                          'mid': tokenizer_mid}
+        train_dataset = Dataset(tokenizer_func[config.cutMethod], tokenizer, max_length, train_texts_1, train_texts_2,
+                                train_labels)
+        test_dataset = Dataset(tokenizer_func[config.cutMethod], tokenizer, max_length, test_texts_1, test_texts_2,
+                               test_labels)
 
         # 生成训练和测试Dataloader
         train_loader = DataLoader(train_dataset, batch_size=config.train_batch_size, shuffle=True)
@@ -227,10 +288,10 @@ if __name__ == '__main__':
         optim = AdamW(model.parameters(), lr=5e-5)
         # 损失函数
         loss_function = torch.nn.BCEWithLogitsLoss()
-        
+
         # 开始训练
         train(model=model, train_loader=train_loader, test_loader=test_loader, optim=optim, loss_function=loss_function,
-              max_epoch=max_epoch, start_epoch=start_epoch, data_id=str(i))
+              max_epoch=max_epoch, start_epoch=start_epoch, data_id=str(5))
 
 
 

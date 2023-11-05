@@ -16,9 +16,36 @@ Because the model data is too large, we do not give the model results of all exp
 
 
 ## Train
+First of all, please modify the code/configs.py, this file has some parameters needed to train our model.
 
-You can configure the training data path, validation data path, model output path and corresponding training parameters of the model in the $config.py$ file for training.
+After modifying the parameters in the configs.py for the corresponding RQ, you can run the train.py or test.py to reproduce the corresponding parameters.
 
-If there is already model data, you can also configure the model path and test data path in the $config.py$ file for testing.
+Note that you first need to modify the storage path of your model, which is the self.model_save_path
+
+### RQ1
+
+Change the path of the dataset self.data_train_path to the corresponding dataset
+
+### RQ2
+
+#### RQ2.1
+
+For APPT_pre-training, please
+For APPT_fine-tuneing, please
+For APPT_LSTM, please
+
+#### RQ2.2
+
+Replace self.splicingMethod with 'cat', 'add', 'sub', 'mul', 'mix' according to the category
+
+#### RQ2.3
+
+Replace self.model_path with 'bert-base-uncased', 'microsoft/codebert-base', 'microsoft/graphcodebert-base' according to the category
+
+### RQ3
+
+Set the self.run_rq3 to True and then align with RQ1
+
+
 
 The training is based on $python 3.7$.
