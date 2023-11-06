@@ -30,9 +30,9 @@ Change the path of the dataset self.data_train_path to the corresponding dataset
 
 #### RQ2.1
 
-For APPT_pre-training, please
-For APPT_fine-tuneing, please
-For APPT_LSTM, please
+For APPT_pre-training, please set self.no_pretrain to True
+For APPT_fine-tuneing, please set self.freeze_bert to True
+For APPT_LSTM, please, please set self.no_lstm to True
 
 #### RQ2.2
 

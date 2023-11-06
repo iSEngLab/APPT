@@ -1,6 +1,6 @@
 import numpy as np
 from torch import nn, Tensor
-from transformers import AutoModel, AutoTokenizer
+from transformers import AutoModel, AutoTokenizer, RobertaConfig, RobertaModel
 import torch
 from sklearn.metrics.pairwise import *
 
@@ -8,9 +8,14 @@ class Model(torch.nn.Module):
     def __init__(self, config):
         super(Model, self).__init__()
         self.splicingMethod = config.splicingMethod
+        self.config = config
+        if config.no_pretrain:
+            model_config = RobertaConfig.from_pretrained('bert-base-uncased')
+            self.bert = RobertaModel(model_config.model_path)
+        else:
+            # bert 预训练模型
+            self.bert = AutoModel.from_pretrained(config.model_path)
 
-        # bert 预训练模型
-        self.bert = AutoModel.from_pretrained(config.model_path)
         if config.freeze_bert:
             for p in self.bert.parameters():
                 p.requires_grad=False
@@ -71,8 +76,11 @@ class Model(torch.nn.Module):
         elif self.splicingMethod == 'mix':
             output = self.cat_features(output1, output2)
 
-        # 将词向量输入lstm
-        out, _ = self.lstm(output)
+        if self.config.no_lstm:
+            out = output
+        else:
+            # 将词向量输入lstm
+            out, _ = self.lstm(output)
 
         # 将lstm输入进行dropout，其输入输出shape相同
 #        out = self.dropout(out)

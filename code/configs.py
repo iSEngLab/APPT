@@ -67,3 +67,7 @@ class Config(object):
         self.test_batch_size = 1
 
         self.run_rq3 = False
+
+        self.no_pretrain = False
+
+        self.no_lstm = False
