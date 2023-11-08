@@ -17,7 +17,11 @@ We have also uploaded the dataset to google drive. You can download it [here](ht
 ## Environment
 
 - python 3.7
-- 
+- numpy==1.24.3
+- pandas==2.0.1
+- scikit_learn==1.2.2
+- torch==2.0.0+cu117
+- transformers==4.28.1
 
 
 
@@ -25,10 +29,6 @@ We have also uploaded the dataset to google drive. You can download it [here](ht
 ## Model
 
 - You can download the model directly through this [link](https://drive.google.com/file/d/1ipQWB3qCDnJLfSFmUNhb0o4lnD00YBiX/view?usp=sharing) for testing, or you can use the data given above to train and test yourself.
-
-Because the model data is too large, we do not give the model results of all experiments, but only the training model of the first data set in each cross validation.
-
-
 
 ## Train
 - First of all, please modify the ```code/configs.py```, this file has some parameters needed to train our model.
@@ -49,7 +49,8 @@ Because the model data is too large, we do not give the model results of all exp
 
 ## Experiments
 
-We integrated all the RQs in the training script, and just changed some parameters for different experiments, listed as follows.
+- We integrated all the RQs in the training script, and just changed some parameters for different experiments, listed as follows.
+- We also provide experimental results in our paper, which can be downloaded using the [link](https://drive.google.com/file/d/1ipQWB3qCDnJLfSFmUNhb0o4lnD00YBiX/view?usp=sharing).  Because the model data is too large, we do not give the model results of all experiments, but only the training model of the first data set in each cross validation.
 
 ### RQ1
 
