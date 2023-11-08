@@ -24,6 +24,12 @@ Note that you first need to modify the storage path of your model, which is the 
 
 ### RQ1
 
+```
+python 
+```
+
+
+
 Change the path of the dataset self.data_train_path to the corresponding dataset
 
 ### RQ2
