@@ -30,7 +30,7 @@ We have also uploaded the dataset to google drive. You can download it [here](ht
 
 - You can download the model directly through this [link](https://drive.google.com/file/d/1ipQWB3qCDnJLfSFmUNhb0o4lnD00YBiX/view?usp=sharing) for testing, or you can use the data given above to train and test yourself.
 
-## Train
+## Train & Testing
 - First of all, please modify the ```code/configs.py```, this file has some parameters needed to train our model.
 
 - After modifying the parameters in the ```configs.py``` for the corresponding RQ, you can run the ```train.py``` or ```test.py``` to reproduce the corresponding parameters.
