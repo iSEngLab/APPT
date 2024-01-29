@@ -82,7 +82,7 @@ def tokenizer_mid(text, tokenizer, max_legnth):
 
 def load(model, PATH):
     checkpoint = torch.load(PATH)
-    model.module.load_state_dict(checkpoint['model_state_dict'])
+    model.load_state_dict(checkpoint['model_state_dict'])
     return model
 
 
